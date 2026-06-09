@@ -58,13 +58,10 @@ def assemble_video(video_path, audio_path, output_filename="final_reel.mp4"):
     else:
         final_audio = audio_clip
         
-    # Apply cinematic slow zoom (Ken Burns effect)
-    # Zooms from 1.0x to 1.1x over the duration
-    def zoom(t):
-        return 1 + 0.1 * (t / video_clip.duration)
-    video_clip = resize(video_clip, zoom)
+    # Removed cinematic zoom (Ken Burns) to save memory on 512MB cloud servers
+    # It requires resizing every frame dynamically in RAM, which crashes small servers.
     
-    # After resizing, crop back to center to maintain 1080x1920
+    # Just crop to center to maintain 1080x1920
     video_clip = crop(video_clip, x_center=video_clip.w/2, y_center=video_clip.h/2, width=1080, height=1920)
 
     video_clip = video_clip.set_audio(final_audio)
