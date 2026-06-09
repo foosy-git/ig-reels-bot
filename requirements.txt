@@ -1,0 +1,7 @@
+google-genai
+edge-tts
+requests
+moviepy==1.0.3
+faster-whisper
+python-dotenv
+numpy
