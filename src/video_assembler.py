@@ -5,7 +5,7 @@ def transcribe_audio(audio_path):
     """Uses faster-whisper to get sentence-level timestamps."""
     from faster_whisper import WhisperModel
     print("Transcribing audio for sentence-level timestamps...")
-    model = WhisperModel("base", device="cpu", compute_type="int8")
+    model = WhisperModel("tiny", device="cpu", compute_type="int8")
     segments, info = model.transcribe(audio_path, word_timestamps=False)
     
     chunks = []
@@ -115,7 +115,7 @@ def assemble_video(video_path, audio_path, output_filename="final_reel.mp4"):
         fps=30, 
         codec="libx264", 
         audio_codec="aac",
-        threads=4,
+        threads=1,
         logger=None # Suppress moviepy logging if it's too noisy
     )
     print(f"Final video saved to {output_path}")
