@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y \
     fonts-liberation \
     && rm -rf /var/lib/apt/lists/*
 
-# Fix ImageMagick policy to allow text rendering
-RUN sed -i 's/<policy domain="path" rights="none" pattern="@\*"/<!-- <policy domain="path" rights="none" pattern="@\*" -->/' /etc/ImageMagick-6/policy.xml
+# Fix ImageMagick policy to allow text rendering (Ignore if file doesn't exist on newer Debian)
+RUN sed -i 's/<policy domain="path" rights="none" pattern="@\*"/<!-- <policy domain="path" rights="none" pattern="@\*" -->/' /etc/ImageMagick-6/policy.xml || true
 
 # Set the working directory in the container
 WORKDIR /app
