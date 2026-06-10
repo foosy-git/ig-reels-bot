@@ -12,8 +12,8 @@ def generate_audio(text, output_filename="audio.mp3"):
     print(f"Generating audio for text: '{text}' using voice: {VOICE_NAME}...")
     output_path = os.path.join(os.getcwd(), output_filename)
     
-    # Adjust pacing to match the reference Instagram video
-    communicate = edge_tts.Communicate(text, VOICE_NAME, rate="-5%")
+    # Adjust pacing to match a slower, natural, conversational speaking rhythm
+    communicate = edge_tts.Communicate(text, VOICE_NAME, rate="-20%")
     
     # Run the async edge_tts function in a synchronous wrapper
     asyncio.run(communicate.save(output_path))
