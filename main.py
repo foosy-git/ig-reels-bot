@@ -2,6 +2,7 @@ import os
 import shutil
 from src.quote_generator import generate_content
 from src.audio_generator import generate_audio
+from src.analytics_fetcher import get_top_performing_context
 from src.video_sourcer import fetch_background_video
 from src.video_assembler import assemble_video
 from src.instagram_publisher import upload_to_temp_host, publish_reel
@@ -22,9 +23,13 @@ def main():
     temp_files = []
     
     try:
+        # Step 0: Fetch Analytics Context
+        print("\n--- Step 0: Analyzing Past Performance ---")
+        analytics_context = get_top_performing_context()
+        
         # Step 1: Generate Quote & Caption
         print("\n--- Step 1: Generating Content ---")
-        quote, caption = generate_content()
+        quote, caption = generate_content(analytics_context)
         print(f"Quote: {quote}")
         
         # Step 2: Generate Voiceover

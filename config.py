@@ -12,8 +12,8 @@ IG_USER_ID = os.getenv("IG_USER_ID")
 IG_ACCESS_TOKEN = os.getenv("IG_ACCESS_TOKEN")
 
 # Edge TTS Settings
-# en-US-AriaNeural is a very warm, empathetic, and captivating female voice.
-VOICE_NAME = "en-US-AriaNeural"
+# en-US-JennyNeural is a highly conversational, natural, and warm female voice.
+VOICE_NAME = "en-US-JennyNeural"
 
 # Video Settings
 VIDEO_WIDTH = 1080
