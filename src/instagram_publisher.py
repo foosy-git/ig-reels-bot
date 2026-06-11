@@ -8,22 +8,22 @@ from config import IG_USER_ID, IG_ACCESS_TOKEN
 
 def upload_to_temp_host(file_path):
     """
-    Uploads the file to catbox.moe to get a direct, temporary public URL.
+    Uploads the file to uguu.se to get a direct, temporary public URL.
     The Instagram Graph API requires a publicly accessible video URL.
     """
     print("Uploading video to temporary public host for Instagram processing...")
     try:
         with open(file_path, 'rb') as f:
             response = requests.post(
-                "https://catbox.moe/user/api.php", 
-                data={"reqtype": "fileupload"},
-                files={"fileToUpload": f}
+                "https://uguu.se/upload", 
+                files={"files[]": f}
             )
         
         response.raise_for_status()
         
-        # Catbox returns the direct URL as plain text
-        direct_url = response.text.strip()
+        # uguu.se returns JSON with the file url
+        data = response.json()
+        direct_url = data['files'][0]['url']
         print(f"Temporary Public URL obtained: {direct_url}")
         return direct_url
     except Exception as e:
