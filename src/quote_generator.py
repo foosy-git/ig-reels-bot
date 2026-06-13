@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import random
 from google import genai
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -13,9 +14,20 @@ def generate_content(analytics_context=None):
 
     client = genai.Client(api_key=GEMINI_API_KEY)
     
-    prompt = """
+    viral_topics = [
+        "Friendship: A message about platonic soulmates, outgrowing friends, or the beauty of low-maintenance friendships.",
+        "The Unsent Letter: Silent breakups and the quiet grief of walking away from someone who didn't fight to keep you.",
+        "The Plot Twist: The feeling that after a long, difficult season, the universe is about to reward you with a massive, unexpected win.",
+        "Soft Discipline: Doing the hard things (gym, studying, working) not out of aggression, but as an act of profound self-love for your future self.",
+        "Burnout & Exhaustion: Validating the feeling of being chronically tired from the daily grind and overwhelming everyday tasks."
+    ]
+    selected_topic = random.choice(viral_topics)
+    print(f"Selected Topic for Generation: {selected_topic}")
+    
+    prompt = f"""
     You are an expert social media manager for a viral Instagram reels page.
-    Generate a deeply relatable, conversational script focused on everyday life struggles, burnout, quiet anxiety, or feeling behind in life. 
+    Generate a deeply relatable, conversational script focused specifically on this theme:
+    "{selected_topic}" 
     
     CRITICAL INSTRUCTION: DO NOT use abstract poetry, metaphors about "seasons changing," or overly profound philosophical language. 
     Write in simple, natural, everyday language. It should sound like a warm, supportive voice note from a best friend who understands the daily grind.
