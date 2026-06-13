@@ -6,7 +6,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import PEXELS_API_KEY, TARGET_DURATION
 
-QUERIES = ["peaceful nature", "ocean waves", "misty forest", "sunrise", "calm rain", "beautiful landscape", "cinematic nature"]
+QUERIES = ["two friends laughing", "couple walking", "friends coffee shop", "cinematic friends", "hugging friend", "romantic walk", "people sharing moment", "warm cafe friends"]
 
 def fetch_background_video(output_filename="background.mp4"):
     """Fetches a random vertical video from Pexels."""

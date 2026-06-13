@@ -1,10 +1,46 @@
 import os
 import sys
+import json
+from google import genai
+
+def translate_segments_to_chinese(segments_text_list):
+    """Translates a list of English phrases into Chinese using Gemini."""
+    from config import GEMINI_API_KEY
+    if not GEMINI_API_KEY:
+        raise ValueError("GEMINI_API_KEY is missing.")
+        
+    client = genai.Client(api_key=GEMINI_API_KEY)
+    
+    prompt = "You are a professional translator. I will provide a JSON array of English subtitle segments. Translate each segment into natural, cinematic Chinese (Standard Mandarin). Return a JSON array of strings in the exact same order. Do not merge or split segments. Respond STRICTLY with the JSON array.\n\n"
+    prompt += json.dumps(segments_text_list)
+    
+    response = client.models.generate_content(
+        model='gemini-2.5-flash',
+        contents=prompt
+    )
+    
+    text = response.text.strip()
+    if text.startswith('```json'):
+        text = text[7:]
+    elif text.startswith('```'):
+        text = text[3:]
+    if text.endswith('```'):
+        text = text[:-3]
+        
+    try:
+        translated_list = json.loads(text.strip())
+        if len(translated_list) != len(segments_text_list):
+            print("Translation array length mismatch! Falling back to English only.")
+            return [""] * len(segments_text_list)
+        return translated_list
+    except Exception as e:
+        print(f"Error parsing Gemini translation: {e}")
+        return [""] * len(segments_text_list)
 
 def transcribe_audio(audio_path):
-    """Uses faster-whisper to get sentence-level timestamps."""
+    """Uses faster-whisper to get phrase-level timestamps."""
     from faster_whisper import WhisperModel
-    print("Transcribing audio for sentence-level timestamps...")
+    print("Transcribing audio for phrase-level timestamps...")
     model = WhisperModel("base", device="cpu", compute_type="int8")
     segments, info = model.transcribe(audio_path, word_timestamps=False)
     
@@ -15,6 +51,15 @@ def transcribe_audio(audio_path):
             "start": segment.start,
             "end": segment.end
         })
+        
+    # Now translate to Chinese
+    english_texts = [c["text"] for c in chunks]
+    print("Translating phrases to Chinese...")
+    chinese_texts = translate_segments_to_chinese(english_texts)
+    
+    for i, c in enumerate(chunks):
+        c["chinese_text"] = chinese_texts[i]
+        
     return chunks
 
 def assemble_video(video_path, audio_path, output_filename="final_reel.mp4"):
@@ -75,34 +120,52 @@ def assemble_video(video_path, audio_path, output_filename="final_reel.mp4"):
     # Darken video slightly for text readability
     dark_overlay = ColorClip(size=(1080, 1920), color=(0,0,0)).set_opacity(0.4).set_duration(video_clip.duration)
     
-    # Create sentence-level text clips
+    # Create phrase-level dual-language text clips
     text_clips = []
-    for c in chunks:
+    for i, c in enumerate(chunks):
         duration = c['end'] - c['start']
-        if duration <= 0:
+        # Prevent micro-flashes for very fast speech
+        if duration < 0.5:
             duration = 0.5
             
         try:
-            txt_clip = TextClip(
-                c['text'], 
+            # Render English (Top)
+            en_clip = TextClip(
+                c['text'].upper(), 
                 fontsize=75, 
                 color='white', 
                 font='Arial-Bold', 
                 stroke_color='black', 
-                stroke_width=2,
+                stroke_width=3,
                 method='caption',
                 align='center',
                 size=(1080 * 0.85, None)
             )
+            # Position English slightly above center
+            en_clip = en_clip.set_position(('center', 1920/2 - 100))\
+                             .set_start(c['start'])\
+                             .set_end(c['start'] + duration)
+            text_clips.append(en_clip)
             
-            # Position slightly higher to avoid Instagram's bottom UI elements
-            txt_clip = txt_clip.set_position(('center', 0.4), relative=True)\
-                               .set_start(c['start'])\
-                               .set_end(c['start'] + duration)\
-                               .crossfadein(0.3)\
-                               .crossfadeout(0.3)
-                               
-            text_clips.append(txt_clip)
+            # Render Chinese (Bottom)
+            if c.get("chinese_text"):
+                zh_clip = TextClip(
+                    c['chinese_text'], 
+                    fontsize=90, 
+                    color='#F9E076', 
+                    font='Microsoft-YaHei', 
+                    stroke_color='black', 
+                    stroke_width=3,
+                    method='caption',
+                    align='center',
+                    size=(1080 * 0.85, None)
+                )
+                # Position Chinese slightly below center
+                zh_clip = zh_clip.set_position(('center', 1920/2 + 20))\
+                                 .set_start(c['start'])\
+                                 .set_end(c['start'] + duration)
+                text_clips.append(zh_clip)
+                
         except Exception as e:
             print(f"Error creating TextClip: {e}")
             raise e
