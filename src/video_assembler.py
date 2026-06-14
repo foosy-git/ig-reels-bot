@@ -120,6 +120,12 @@ def assemble_video(video_path, audio_path, output_filename="final_reel.mp4"):
     # Darken video slightly for text readability
     dark_overlay = ColorClip(size=(1080, 1920), color=(0,0,0)).set_opacity(0.4).set_duration(video_clip.duration)
     
+    import platform
+    if platform.system() == "Windows":
+        chinese_font = r"C:\Windows\Fonts\msyh.ttc"
+    else:
+        chinese_font = "WenQuanYi-Zen-Hei"
+
     # Create phrase-level dual-language text clips
     text_clips = []
     for i, c in enumerate(chunks):
@@ -131,7 +137,7 @@ def assemble_video(video_path, audio_path, output_filename="final_reel.mp4"):
         try:
             # Render English (Top)
             en_clip = TextClip(
-                c['text'].upper(), 
+                c['text'], 
                 fontsize=75, 
                 color='white', 
                 font='Arial-Bold', 
@@ -153,7 +159,7 @@ def assemble_video(video_path, audio_path, output_filename="final_reel.mp4"):
                     c['chinese_text'], 
                     fontsize=90, 
                     color='#F9E076', 
-                    font='Microsoft-YaHei', 
+                    font=chinese_font, 
                     stroke_color='black', 
                     stroke_width=3,
                     method='caption',
