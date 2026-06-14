@@ -9,15 +9,28 @@ def translate_segments_to_chinese(segments_text_list):
     if not GEMINI_API_KEY:
         raise ValueError("GEMINI_API_KEY is missing.")
         
-    client = genai.Client(api_key=GEMINI_API_KEY)
+    import httpx
+    
+    # Add a strict 30 second timeout to prevent the API call from hanging indefinitely
+    client = genai.Client(
+        api_key=GEMINI_API_KEY,
+        http_options={'timeout': httpx.Timeout(30.0)}
+    )
     
     prompt = "You are a professional translator. I will provide a JSON array of English subtitle segments. Translate each segment into natural, cinematic Chinese (Standard Mandarin). Return a JSON array of strings in the exact same order. Do not merge or split segments. Respond STRICTLY with the JSON array.\n\n"
     prompt += json.dumps(segments_text_list)
     
-    response = client.models.generate_content(
-        model='gemini-2.5-flash',
-        contents=prompt
-    )
+    print(f"  -> Sending {len(segments_text_list)} segments to Gemini for translation...")
+    
+    try:
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt
+        )
+        print("  -> Received response from Gemini.")
+    except Exception as e:
+        print(f"Gemini API request failed or timed out: {e}")
+        return [""] * len(segments_text_list)
     
     text = response.text.strip()
     if text.startswith('```json'):
