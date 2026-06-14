@@ -158,8 +158,8 @@ def assemble_video(video_path, audio_path, output_filename="final_reel.mp4"):
                 align='center',
                 size=(1080 * 0.85, None)
             )
-            # Position English higher up to allow room for word wrapping
-            en_clip = en_clip.set_position(('center', 1920/2 - 160))\
+            # Position English near the center of the screen
+            en_clip = en_clip.set_position(('center', 1920/2 - 100))\
                              .set_start(c['start'])\
                              .set_end(c['start'] + duration)
             text_clips.append(en_clip)
@@ -177,8 +177,8 @@ def assemble_video(video_path, audio_path, output_filename="final_reel.mp4"):
                     align='center',
                     size=(1080 * 0.85, None)
                 )
-                # Position Chinese lower down so it never touches the English text
-                zh_clip = zh_clip.set_position(('center', 1920/2 + 60))\
+                # Position Chinese deeply in the lower 30% of the screen
+                zh_clip = zh_clip.set_position(('center', 1500))\
                                  .set_start(c['start'])\
                                  .set_end(c['start'] + duration)
                 text_clips.append(zh_clip)
