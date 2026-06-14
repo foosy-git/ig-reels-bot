@@ -9,12 +9,10 @@ def translate_segments_to_chinese(segments_text_list):
     if not GEMINI_API_KEY:
         raise ValueError("GEMINI_API_KEY is missing.")
         
-    import httpx
-    
-    # Add a strict 30 second timeout to prevent the API call from hanging indefinitely
+    # Add a strict 30 second timeout (in milliseconds) to prevent the API call from hanging
     client = genai.Client(
         api_key=GEMINI_API_KEY,
-        http_options={'timeout': httpx.Timeout(30.0)}
+        http_options={'timeout': 30000}
     )
     
     prompt = "You are a professional translator. I will provide a JSON array of English subtitle segments. Translate each segment into natural, cinematic Chinese (Standard Mandarin). Return a JSON array of strings in the exact same order. Do not merge or split segments. Respond STRICTLY with the JSON array.\n\n"
