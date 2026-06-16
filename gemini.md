@@ -6,7 +6,7 @@
 - **Theme:** Friendship, relationships, gratitude, and optimistic positivity.
 - **Metric Optimization:** The bot is optimized for Instagram "Shares" (DMs). Scripts are designed to make viewers think of a specific person and send the reel to them.
 - **Voice:** `edge-tts` using `en-US-JennyNeural`. (DO NOT apply rate slow-downs; the voice must remain upbeat and natural).
-- **Subtitles:** Dual-language. English (top, Arial-Bold, lowercase/natural casing), Chinese (bottom, #F9E076 yellow, Chinese font).
+- **Subtitles:** Dual-language. English (top, Arial-Bold, lowercase/natural casing), Chinese (bottom, white, Chinese font).
 
 ## 2. Technical Architecture
 - **Text & Translation:** Gemini 2.5 Flash (`src/quote_generator.py` and `src/video_assembler.py`).
