@@ -168,11 +168,11 @@ def assemble_video(video_path, audio_path, output_filename="final_reel.mp4"):
             if c.get("chinese_text"):
                 zh_clip = TextClip(
                     c['chinese_text'], 
-                    fontsize=60, 
-                    color='#F9E076', 
+                    fontsize=70, 
+                    color='white', 
                     font=chinese_font, 
                     stroke_color='black', 
-                    stroke_width=3,
+                    stroke_width=1.5,
                     method='caption',
                     align='center',
                     size=(1080 * 0.85, None)
