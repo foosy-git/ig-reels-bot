@@ -12,8 +12,8 @@ def generate_audio(text, output_filename="audio.mp3"):
     print(f"Generating audio for text: '{text}' using voice: {VOICE_NAME}...")
     output_path = os.path.join(os.getcwd(), output_filename)
     
-    # Removed the slow pacing so the voice sounds natural, upbeat, and optimistic
-    communicate = edge_tts.Communicate(text, VOICE_NAME)
+    # Added a +25% speed increase so the voice sounds punchy and extremely fast-paced for tech audiences
+    communicate = edge_tts.Communicate(text, VOICE_NAME, rate="+25%")
     
     # Run the async edge_tts function in a synchronous wrapper
     asyncio.run(communicate.save(output_path))
