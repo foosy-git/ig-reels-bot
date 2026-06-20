@@ -35,10 +35,10 @@ def generate_content(analytics_context=None):
     
     The script MUST follow this exact 3-part viral structure:
     - **Part 1 (The Hook - Save Bait):** A fast, high-energy opening sentence that creates FOMO (e.g., '3 AI tools that feel illegal to know', 'Stop doing X manually, do this instead', 'Save this workflow for Monday morning').
-    - **Part 2 (The Value):** Name 1 or 2 specific actionable tools or prompt structures. Keep the sentences short, punchy, and dense with value.
+    - **Part 2 (The Value & How-To):** Name a specific, actionable tool or prompt structure AND explicitly explain HOW to use it in a real-world scenario. Give concrete context (e.g., don't just say 'Use Zapier', say 'Use Zapier to automatically turn starred emails into tasks in Notion so nothing falls through the cracks.'). Keep it punchy but dense with practical value.
     - **Part 3 (The CTA):** A brief closing directing them to the caption.
     
-    The entire script should be fast and take exactly 15 to 20 seconds to read aloud.
+    The entire script should be fast and take exactly 15 to 25 seconds to read aloud.
     """
     
     if analytics_context:
@@ -77,7 +77,7 @@ def generate_content(analytics_context=None):
     except Exception as e:
         print(f"Error from Gemini API: {e}")
         return (
-            "Stop wasting hours on repetitive tasks. Save this video for Monday. Tool number 1 is Zapier, which connects your apps so they talk to each other automatically. Tool number 2 is Perplexity AI, the ultimate research assistant that actually cites its sources. Read the caption for the exact setups.",
+            "Stop wasting hours on repetitive tasks. Save this video for Monday. Tool number 1 is Zapier. You can use Zapier to automatically turn starred emails into Notion tasks so nothing falls through the cracks. Read the caption for the exact setup.",
             "Want to get 10 hours of your week back? Here is the exact step-by-step workflow you need to set up right now. First... [Detailed tutorial here].\n\nComment AUTOMATE and I will send you the direct links right now!\n\n#ai #productivity #automation #tech #chatgpt"
         )
 
