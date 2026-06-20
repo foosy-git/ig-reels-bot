@@ -5,8 +5,8 @@
 ## 1. Design & Algorithmic Directives
 - **Theme:** AI, Automation, and Everyday Tech Productivity.
 - **Metric Optimization:** The bot is highly optimized for Instagram "Saves" and Watch Time (Loops). Hooks are designed to be "Save-bait" and captions are extremely long tutorials with an "AUTOMATE" comment Call-To-Action.
-- **Voice:** `edge-tts` using `en-US-ChristopherNeural` (Professional, fast-paced male voice). Rate is boosted by `+10%` to keep audience attention.
-- **Subtitles:** Dual-language. English (top, Arial-Bold, lowercase/natural casing), Chinese (bottom, white, Chinese font). Background overlay is darkened to 0.55 for a sleek dark-mode aesthetic.
+- **Voice:** `edge-tts` using `en-US-GuyNeural` (Professional, fast-paced male voice). Rate is boosted by `+25%` to keep audience attention.
+- **Subtitles:** English only (center, Arial-Bold, lowercase/natural casing). Background overlay is darkened to 0.55 for a sleek dark-mode aesthetic.
 
 ## 2. Technical Architecture
 - **Text & Translation:** Gemini 2.5 Flash (`src/quote_generator.py` and `src/video_assembler.py`).
