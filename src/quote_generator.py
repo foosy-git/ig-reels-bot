@@ -46,7 +46,7 @@ def generate_content(analytics_context=None):
         
     prompt += """
     
-    Also generate a LONG, highly detailed, step-by-step tutorial caption. It must be long enough that it takes the viewer at least 30-40 seconds to read (which will cause the short video to loop multiple times in the background, skyrocketing Watch Time). 
+    Also generate a highly detailed, step-by-step tutorial caption. It must be long enough to keep the viewer reading (boosting watch time), BUT it MUST be strictly under 1800 characters total. 
     
     The caption MUST end with a high-engagement call to action: 'Comment AUTOMATE and I will DM you the exact links/prompts.'
     Include high-reach hashtags like #ai #productivity #automation #tech #chatgpt.
@@ -73,7 +73,16 @@ def generate_content(analytics_context=None):
             text = text[:-3]
             
         data = json.loads(text.strip())
-        return data['quote'], data['caption']
+        
+        quote = data['quote']
+        caption = data['caption']
+        
+        # Hard safeguard: Instagram's absolute limit is 2200 characters. 
+        # We truncate at 2100 to leave room for potential trailing spaces or formatting.
+        if len(caption) > 2100:
+            caption = caption[:2100] + "..."
+            
+        return quote, caption
     except Exception as e:
         print(f"Error from Gemini API: {e}")
         return (
