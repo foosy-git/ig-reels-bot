@@ -12,8 +12,8 @@ IG_USER_ID = os.getenv("IG_USER_ID")
 IG_ACCESS_TOKEN = os.getenv("IG_ACCESS_TOKEN")
 
 # Edge TTS Settings
-# en-US-JennyNeural is a highly conversational, natural, and warm female voice.
-VOICE_NAME = "en-US-JennyNeural"
+# en-US-GuyNeural is a highly energetic, convincing, and positive male voice perfectly suited for viral tech content.
+VOICE_NAME = "en-US-GuyNeural"
 
 # Video Settings
 VIDEO_WIDTH = 1080
