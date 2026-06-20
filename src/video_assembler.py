@@ -3,50 +3,7 @@ import sys
 import json
 from google import genai
 
-def translate_segments_to_chinese(segments_text_list):
-    """Translates a list of English phrases into Chinese using Gemini."""
-    from config import GEMINI_API_KEY
-    if not GEMINI_API_KEY:
-        raise ValueError("GEMINI_API_KEY is missing.")
-        
-    # Add a strict 30 second timeout (in milliseconds) to prevent the API call from hanging
-    client = genai.Client(
-        api_key=GEMINI_API_KEY,
-        http_options={'timeout': 30000}
-    )
-    
-    prompt = "You are a professional translator. I will provide a JSON array of English subtitle segments. Translate each segment into natural, cinematic Chinese (Standard Mandarin). Return a JSON array of strings in the exact same order. Do not merge or split segments. Respond STRICTLY with the JSON array.\n\n"
-    prompt += json.dumps(segments_text_list)
-    
-    print(f"  -> Sending {len(segments_text_list)} segments to Gemini for translation...")
-    
-    try:
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=prompt
-        )
-        print("  -> Received response from Gemini.")
-    except Exception as e:
-        print(f"Gemini API request failed or timed out: {e}")
-        return [""] * len(segments_text_list)
-    
-    text = response.text.strip()
-    if text.startswith('```json'):
-        text = text[7:]
-    elif text.startswith('```'):
-        text = text[3:]
-    if text.endswith('```'):
-        text = text[:-3]
-        
-    try:
-        translated_list = json.loads(text.strip())
-        if len(translated_list) != len(segments_text_list):
-            print("Translation array length mismatch! Falling back to English only.")
-            return [""] * len(segments_text_list)
-        return translated_list
-    except Exception as e:
-        print(f"Error parsing Gemini translation: {e}")
-        return [""] * len(segments_text_list)
+
 
 def transcribe_audio(audio_path):
     """Uses faster-whisper to get phrase-level timestamps."""
@@ -62,14 +19,6 @@ def transcribe_audio(audio_path):
             "start": segment.start,
             "end": segment.end
         })
-        
-    # Now translate to Chinese
-    english_texts = [c["text"] for c in chunks]
-    print("Translating phrases to Chinese...")
-    chinese_texts = translate_segments_to_chinese(english_texts)
-    
-    for i, c in enumerate(chunks):
-        c["chinese_text"] = chinese_texts[i]
         
     return chunks
 
@@ -131,11 +80,7 @@ def assemble_video(video_path, audio_path, output_filename="final_reel.mp4"):
     # Darken video heavily for a sleek tech aesthetic and text readability
     dark_overlay = ColorClip(size=(1080, 1920), color=(0,0,0)).set_opacity(0.55).set_duration(video_clip.duration)
     
-    import platform
-    if platform.system() == "Windows":
-        chinese_font = r"C:\Windows\Fonts\msyh.ttc"
-    else:
-        chinese_font = "WenQuanYi-Zen-Hei"
+
 
     # Create phrase-level dual-language text clips
     text_clips = []
@@ -164,24 +109,7 @@ def assemble_video(video_path, audio_path, output_filename="final_reel.mp4"):
                              .set_end(c['start'] + duration)
             text_clips.append(en_clip)
             
-            # Render Chinese (Bottom)
-            if c.get("chinese_text"):
-                zh_clip = TextClip(
-                    c['chinese_text'], 
-                    fontsize=70, 
-                    color='white', 
-                    font=chinese_font, 
-                    stroke_color='black', 
-                    stroke_width=1.5,
-                    method='caption',
-                    align='center',
-                    size=(1080 * 0.70, None)
-                )
-                # Position Chinese deeply in the lower 30% of the screen
-                zh_clip = zh_clip.set_position(('center', 1500))\
-                                 .set_start(c['start'])\
-                                 .set_end(c['start'] + duration)
-                text_clips.append(zh_clip)
+
                 
         except Exception as e:
             print(f"Error creating TextClip: {e}")
