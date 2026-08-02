@@ -15,7 +15,8 @@ def upload_to_temp_host(file_path):
         with open(file_path, 'rb') as f:
             response = requests.post(
                 "https://uguu.se/upload", 
-                files={"files[]": f}
+                files={"files[]": f},
+                timeout=30
             )
         
         response.raise_for_status()
@@ -36,7 +37,7 @@ def create_carousel_item(image_url):
         'is_carousel_item': 'true',
         'access_token': IG_ACCESS_TOKEN
     }
-    response = requests.post(post_url, data=payload)
+    response = requests.post(post_url, data=payload, timeout=30)
     response.raise_for_status()
     item_id = response.json().get('id')
     print(f"Created carousel item container (ID: {item_id})")
@@ -70,7 +71,7 @@ def publish_carousel(image_paths, caption):
         'access_token': IG_ACCESS_TOKEN
     }
     
-    response = requests.post(carousel_url, data=carousel_payload)
+    response = requests.post(carousel_url, data=carousel_payload, timeout=30)
     if response.status_code != 200:
         print(f"Failed to create carousel container: {response.text}")
         response.raise_for_status()
@@ -84,7 +85,7 @@ def publish_carousel(image_paths, caption):
     max_retries = 30 # 2.5 minutes max
     retries = 0
     while retries < max_retries:
-        status_res = requests.get(status_url)
+        status_res = requests.get(status_url, timeout=30)
         status_data = status_res.json()
         status = status_data.get('status_code')
         
@@ -108,7 +109,7 @@ def publish_carousel(image_paths, caption):
         'access_token': IG_ACCESS_TOKEN
     }
     
-    pub_res = requests.post(publish_url, data=publish_payload)
+    pub_res = requests.post(publish_url, data=publish_payload, timeout=30)
     pub_res.raise_for_status()
     
     print("Carousel published successfully!")
