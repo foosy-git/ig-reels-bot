@@ -43,6 +43,7 @@ def generate_content(analytics_context=None):
     2. They must be authoritative, insightful, and highly shareable—the kind of quote a manager or professional would instantly want to save or share.
     3. Keep them relatively short (1 to 2 sentences maximum per quote) so they fit beautifully in large font on a portrait image. Do not use hashtags or emojis in the quotes themselves.
     4. Make sure each of the 5 quotes is unique and gives a fresh perspective. Avoid common cliches.
+    5. VERY IMPORTANT: Do NOT use semicolons (;). Write in a highly natural, conversational, and human tone. Avoid overly formal, academic, or robotic sentence structures.
     
     To ensure this generation is completely unique and different from previous runs, use this random seed to influence your creative angles: {random_seed}
     
