@@ -10,16 +10,29 @@ def generate_carousel_images(quotes, handle="@yourdailytool_"):
     width, height = 1080, 1350
     output_files = []
     
-    # Try to load a nice font, fallback to default if not found
-    font_path = "arial.ttf"
-    if os.name == 'nt': # Windows
-        font_path = "C:\\Windows\\Fonts\\arial.ttf"
-        
-    try:
-        main_font = ImageFont.truetype(font_path, 60)
-        handle_font = ImageFont.truetype(font_path, 35)
-    except IOError:
-        print("Standard font not found, using default PIL font (will not look pretty).")
+    # Try to load a nice font, check common paths for Windows and Linux
+    font_paths_to_try = [
+        "arial.ttf", 
+        "C:\\Windows\\Fonts\\arial.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        "/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf"
+    ]
+    
+    main_font = None
+    handle_font = None
+    for path in font_paths_to_try:
+        try:
+            main_font = ImageFont.truetype(path, 110)
+            handle_font = ImageFont.truetype(path, 45)
+            print(f"Successfully loaded font: {path}")
+            break
+        except IOError:
+            continue
+            
+    if main_font is None:
+        print("Warning: No standard fonts found! Using default PIL font (will be tiny).")
+        print("Please run: sudo apt-get install fonts-dejavu")
         main_font = ImageFont.load_default()
         handle_font = ImageFont.load_default()
         
@@ -32,9 +45,8 @@ def generate_carousel_images(quotes, handle="@yourdailytool_"):
         draw.rectangle([20, 20, width-20, height-20], outline=(30, 30, 30), width=4)
         
         # Wrap text so it fits beautifully in the center
-        # Average character width at size 60 is roughly 30px. 
-        # So 1080 / 30 = 36 chars per line max. Let's use 30 to be safe and elegant.
-        wrapped_text = textwrap.fill(quote, width=30)
+        # At size 110, we can safely fit about 16-18 characters across 1080 pixels
+        wrapped_text = textwrap.fill(quote, width=17)
         
         # Calculate text bounding box to center it perfectly
         left, top, right, bottom = draw.multiline_textbbox((0, 0), wrapped_text, font=main_font, align="center")
