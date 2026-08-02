@@ -2,7 +2,9 @@ import json
 import os
 import sys
 import random
+import uuid
 from google import genai
+from google.genai import types
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import GEMINI_API_KEY
@@ -20,10 +22,16 @@ def generate_content(analytics_context=None):
         "How a leader's character influences their team more than their skills.",
         "Building trust: the foundation of every meaningful human connection.",
         "Empowering others to succeed rather than taking the credit.",
-        "Why valuing people is the ultimate secret to true influence."
+        "Why valuing people is the ultimate secret to true influence.",
+        "Leading with empathy in a high-stress environment.",
+        "The difference between a manager and a true leader.",
+        "Vulnerability as a strength in leadership.",
+        "Creating a culture where people feel safe to fail and grow."
     ]
     selected_topic = random.choice(viral_topics)
     print(f"Selected Topic for Generation: {selected_topic}")
+    
+    random_seed = str(uuid.uuid4())
     
     prompt = f"""
     You are an expert social media copywriter for an Instagram page dedicated to profound, authoritative quotes on Leadership and People Relationships.
@@ -34,7 +42,9 @@ def generate_content(analytics_context=None):
     1. Write quotes that provide timeless wisdom on leadership and human connection (similar to the tone of John C. Maxwell or Simon Sinek).
     2. They must be authoritative, insightful, and highly shareable—the kind of quote a manager or professional would instantly want to save or share.
     3. Keep them relatively short (1 to 2 sentences maximum per quote) so they fit beautifully in large font on a portrait image. Do not use hashtags or emojis in the quotes themselves.
-    4. Make sure each of the 5 quotes is unique but fits the theme.
+    4. Make sure each of the 5 quotes is unique and gives a fresh perspective. Avoid common cliches.
+    
+    To ensure this generation is completely unique and different from previous runs, use this random seed to influence your creative angles: {random_seed}
     
     Also generate a single Instagram caption to accompany this 5-slide carousel. The caption should be thoughtful, encourage engagement, and include high-reach hashtags like #leadership #relationships #growth #influence #mindset.
     
@@ -53,8 +63,11 @@ def generate_content(analytics_context=None):
     
     try:
         response = client.models.generate_content(
-            model='gemini-2.5-pro',
+            model='gemini-2.5-flash',
             contents=prompt,
+            config=types.GenerateContentConfig(
+                temperature=0.9,
+            )
         )
         
         text = response.text.strip()
