@@ -58,8 +58,10 @@ def generate_carousel_images(quotes, handle="@yourdailytool_"):
         
         draw.text((handle_x, handle_y), handle, fill=(130, 130, 130), font=handle_font)
         
-        # Save the image
-        filename = f"slide_{i+1}.png"
+        # Save the image using a unique ID to prevent race conditions if multiple bots run
+        import uuid
+        unique_id = uuid.uuid4().hex[:8]
+        filename = f"slide_{i+1}_{unique_id}.png"
         filepath = os.path.join(os.getcwd(), filename)
         img.save(filepath)
         output_files.append(filepath)
