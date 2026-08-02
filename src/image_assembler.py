@@ -10,29 +10,19 @@ def generate_carousel_images(quotes, handle="@yourdailytool_"):
     width, height = 1080, 1350
     output_files = []
     
-    # Try to load a nice font, check common paths for Windows and Linux
-    font_paths_to_try = [
-        "arial.ttf", 
-        "C:\\Windows\\Fonts\\arial.ttf",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
-        "/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf"
-    ]
+    # Load the bundled font from the assets folder directly
+    # This guarantees the font is always available regardless of OS or sudo permissions!
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    bundled_font_path = os.path.join(project_root, "assets", "Roboto-Bold.ttf")
     
     main_font = None
     handle_font = None
-    for path in font_paths_to_try:
-        try:
-            main_font = ImageFont.truetype(path, 110)
-            handle_font = ImageFont.truetype(path, 45)
-            print(f"Successfully loaded font: {path}")
-            break
-        except IOError:
-            continue
-            
-    if main_font is None:
-        print("Warning: No standard fonts found! Using default PIL font (will be tiny).")
-        print("Please run: sudo apt-get install fonts-dejavu")
+    try:
+        main_font = ImageFont.truetype(bundled_font_path, 110)
+        handle_font = ImageFont.truetype(bundled_font_path, 45)
+        print(f"Successfully loaded bundled font: {bundled_font_path}")
+    except IOError:
+        print("Warning: Bundled font not found! Using default PIL font (will be tiny).")
         main_font = ImageFont.load_default()
         handle_font = ImageFont.load_default()
         
