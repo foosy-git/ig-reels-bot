@@ -15,47 +15,38 @@ def generate_content(analytics_context=None):
     client = genai.Client(api_key=GEMINI_API_KEY)
     
     viral_topics = [
-        "Hidden AI Tools: Discovering lesser-known AI websites or tools that can save you 10+ hours a week. Focus on tools that feel like a 'cheat code'.",
-        "Workflow Automation: A tip on how to automate repetitive daily tasks (emails, data entry, scheduling) using tools like Zapier or AI assistants.",
-        "ChatGPT Prompt Engineering: Sharing a highly specific, advanced ChatGPT prompt that solves a common productivity problem or supercharges learning.",
-        "Time Management Frameworks: Combining technology with deep work frameworks (like automated Pomodoro or AI-driven calendar blocking) to beat burnout.",
-        "The Anti-Hustle Automation: Using AI not to work harder, but to work less so you can enjoy your life. Focus on 'getting time back'."
+        "Unspoken truth about true friendship and loyalty.",
+        "Overcoming silent struggles and finding inner peace.",
+        "The pain of letting go of someone you love, but knowing it's right.",
+        "A reminder that you are enough, even on your hardest days.",
+        "The beauty of quiet moments and self-love.",
+        "Appreciating the people who stayed when things got hard."
     ]
     selected_topic = random.choice(viral_topics)
     print(f"Selected Topic for Generation: {selected_topic}")
     
     prompt = f"""
-    You are an expert social media manager and AI productivity consultant for a viral tech Instagram reels page.
-    Generate a highly actionable, fast-paced script focused specifically on this theme:
+    You are an expert social media copywriter for an Instagram page dedicated to deeply emotional, relatable, and beautiful quotes.
+    Generate exactly 3 static text quotes focused specifically on this theme:
     "{selected_topic}" 
     
-    CRITICAL INSTRUCTION: DO NOT use poetic, emotional, or philosophical language. Write in sharp, authoritative, and energetic language. It should sound like an exclusive tip from a senior tech founder.
+    CRITICAL INSTRUCTIONS: 
+    1. Write quotes that touch people's hearts. They must be highly relatable, slightly vulnerable, and evoke a strong emotional response (nostalgia, comfort, gentle melancholy, or profound gratitude).
+    2. The quotes MUST be highly shareable—the kind of quote someone instantly wants to forward to their best friend, partner, or put on their story because it perfectly captures how they feel.
+    3. Keep them relatively short (1 to 3 sentences maximum per quote) so they fit beautifully in large font on a portrait image. Do not use hashtags or emojis in the quotes themselves.
+    4. Make sure each of the 3 quotes is unique but fits the theme.
     
-    ALGORITHMIC FOCUS: Optimize the script for "Saves". The viewer must feel an overwhelming urge to hit the "Save" button so they can reference the tools/tips later.
-    
-    The script MUST follow this exact 3-part viral structure:
-    - **Part 1 (The Hook - Save Bait):** A fast, high-energy opening sentence that creates FOMO (e.g., '3 AI tools that feel illegal to know', 'Stop doing X manually, do this instead', 'Save this workflow for Monday morning').
-    - **Part 2 (The Value & How-To):** Name a specific, actionable tool or prompt structure AND explicitly explain HOW to use it in a real-world scenario. Give concrete context (e.g., don't just say 'Use Zapier', say 'Use Zapier to automatically turn starred emails into tasks in Notion so nothing falls through the cracks.'). Keep it punchy but dense with practical value.
-    - **Part 3 (The CTA):** A brief closing directing them to the caption.
-    
-    The entire script should be fast and take exactly 15 to 25 seconds to read aloud.
-    """
-    
-    if analytics_context:
-        prompt += f"\n\nTo help you capture the perfect viral tone, here is data from our recent top-performing videos:\n{analytics_context}\nPlease lean heavily into the style, hooks, and themes that made these top videos successful, but write a brand new script!"
-        
-    prompt += """
-    
-    Also generate a highly detailed, step-by-step tutorial caption. It must be long enough to keep the viewer reading (boosting watch time), BUT it MUST be strictly under 1800 characters total. 
-    
-    The caption MUST end with a high-engagement call to action: 'Comment AUTOMATE and I will DM you the exact links/prompts.'
-    Include high-reach hashtags like #ai #productivity #automation #tech #chatgpt.
+    Also generate a single Instagram caption to accompany this 3-slide carousel. The caption should be thoughtful, encourage people to tag a friend or share, and include high-reach hashtags like #quotes #relatable #lifequotes #mindset #growth.
     
     Respond STRICTLY in JSON format:
-    {
-      "quote": "The full generated text (Hook + Body + Outro) as a single continuous paragraph.",
+    {{
+      "quotes": [
+        "The first emotional quote goes here.",
+        "The second emotional quote goes here.",
+        "The third emotional quote goes here."
+      ],
       "caption": "The caption with CTA and hashtags here."
-    }
+    }}
     """
     
     try:
@@ -74,22 +65,30 @@ def generate_content(analytics_context=None):
             
         data = json.loads(text.strip())
         
-        quote = data['quote']
+        quotes = data['quotes']
         caption = data['caption']
         
-        # Hard safeguard: Instagram's absolute limit is 2200 characters. 
-        # We truncate at 2100 to leave room for potential trailing spaces or formatting.
+        # Ensure we always return exactly 3 quotes
+        if len(quotes) != 3:
+            print("Warning: Gemini did not return exactly 3 quotes. Adjusting...")
+            quotes = (quotes + [""] * 3)[:3]
+            
+        # Hard safeguard for caption length
         if len(caption) > 2100:
             caption = caption[:2100] + "..."
             
-        return quote, caption
+        return quotes, caption
     except Exception as e:
         print(f"Error from Gemini API: {e}")
         return (
-            "Stop wasting hours on repetitive tasks. Save this video for Monday. Tool number 1 is Zapier. You can use Zapier to automatically turn starred emails into Notion tasks so nothing falls through the cracks. Read the caption for the exact setup.",
-            "Want to get 10 hours of your week back? Here is the exact step-by-step workflow you need to set up right now. First... [Detailed tutorial here].\n\nComment AUTOMATE and I will send you the direct links right now!\n\n#ai #productivity #automation #tech #chatgpt"
+            [
+                "Some people arrive and make such a beautiful impact on your life, you can barely remember what life was like without them.",
+                "It takes courage to let go of what you can't change and embrace the quiet peace of starting over.",
+                "Forward this to someone who makes your bad days a little bit brighter just by existing."
+            ],
+            "Tag the person who came to mind. ❤️\n\n#quotes #friendship #love #healing #relatable #mindset"
         )
 
 if __name__ == "__main__":
-    quote, caption = generate_content()
-    print(f"Quote: {quote}\nCaption: {caption}")
+    quotes, caption = generate_content()
+    print(f"Quotes: {json.dumps(quotes, indent=2)}\nCaption: {caption}")
