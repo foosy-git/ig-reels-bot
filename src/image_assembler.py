@@ -18,8 +18,8 @@ def generate_carousel_images(quotes, handle="@yourdailytool_"):
     main_font = None
     handle_font = None
     try:
-        main_font = ImageFont.truetype(bundled_font_path, 110)
-        handle_font = ImageFont.truetype(bundled_font_path, 45)
+        main_font = ImageFont.truetype(bundled_font_path, 85)
+        handle_font = ImageFont.truetype(bundled_font_path, 35)
         print(f"Successfully loaded bundled font: {bundled_font_path}")
     except IOError:
         print("Warning: Bundled font not found! Using default PIL font (will be tiny).")
@@ -27,35 +27,31 @@ def generate_carousel_images(quotes, handle="@yourdailytool_"):
         handle_font = ImageFont.load_default()
         
     for i, quote in enumerate(quotes):
-        # Create a sleek dark grey background
-        img = Image.new('RGB', (width, height), color=(15, 15, 15))
+        # Create a sleek, minimalist true dark background
+        img = Image.new('RGB', (width, height), color=(10, 10, 10))
         draw = ImageDraw.Draw(img)
         
-        # Add a subtle gradient effect or border (optional aesthetic touch)
-        draw.rectangle([20, 20, width-20, height-20], outline=(30, 30, 30), width=4)
+        # Wrap text elegantly. At size 85, width 22 provides a beautiful, narrow center column
+        wrapped_text = textwrap.fill(quote, width=22)
         
-        # Wrap text so it fits beautifully in the center
-        # At size 110, we can safely fit about 16-18 characters across 1080 pixels
-        wrapped_text = textwrap.fill(quote, width=17)
-        
-        # Calculate text bounding box to center it perfectly
-        left, top, right, bottom = draw.multiline_textbbox((0, 0), wrapped_text, font=main_font, align="center")
+        # Calculate text bounding box to center it perfectly (with added line spacing)
+        left, top, right, bottom = draw.multiline_textbbox((0, 0), wrapped_text, font=main_font, align="center", spacing=25)
         text_width = right - left
         text_height = bottom - top
         
         x = (width - text_width) / 2
         y = (height - text_height) / 2
         
-        # Draw the main quote
-        draw.multiline_text((x, y), wrapped_text, fill=(245, 245, 245), font=main_font, align="center")
+        # Draw the main quote in a soft, premium off-white (less harsh than pure white)
+        draw.multiline_text((x, y), wrapped_text, fill=(225, 225, 225), font=main_font, align="center", spacing=25)
         
-        # Draw the Instagram handle at the bottom center
+        # Draw the Instagram handle at the bottom center in a subtle dark grey
         handle_left, handle_top, handle_right, handle_bottom = draw.textbbox((0, 0), handle, font=handle_font)
         handle_width = handle_right - handle_left
         handle_x = (width - handle_width) / 2
-        handle_y = height - 150
+        handle_y = height - 120
         
-        draw.text((handle_x, handle_y), handle, fill=(150, 150, 150), font=handle_font)
+        draw.text((handle_x, handle_y), handle, fill=(100, 100, 100), font=handle_font)
         
         # Save the image
         filename = f"slide_{i+1}.png"
