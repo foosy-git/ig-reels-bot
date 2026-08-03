@@ -2,7 +2,7 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
 
-def generate_carousel_images(quotes, handle="@yourdailytool_"):
+def generate_carousel_images(quotes, handle="@BeIntentional_Lab"):
     """
     Generates a series of 1080x1350 (4:5) Instagram Portrait images from a list of quotes.
     Returns a list of file paths.
