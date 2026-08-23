@@ -38,6 +38,8 @@ def create_carousel_item(image_url):
         'access_token': IG_ACCESS_TOKEN
     }
     response = requests.post(post_url, data=payload, timeout=30)
+    if response.status_code != 200:
+        print(f"Meta API Error (Carousel Item): {response.text}")
     response.raise_for_status()
     item_id = response.json().get('id')
     print(f"Created carousel item container (ID: {item_id})")
